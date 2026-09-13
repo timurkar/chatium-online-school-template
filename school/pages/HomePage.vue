@@ -30,7 +30,7 @@
             <div class="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-indigo-200 via-violet-100 to-sky-100 blur-2xl opacity-80"></div>
             <div class="relative grid grid-cols-2 gap-4">
               <div v-for="(c, i) in courses.slice(0, 4)" :key="c.id" class="rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm" :class="i % 2 ? 'translate-y-6' : ''">
-                <CourseCover :image-hash="c.imageHash" :emoji="c.emoji" :title="c.title" :seed="c.id" wrapper-class="aspect-[16/10] rounded-xl" emoji-class="text-5xl" />
+                <CourseCover :image-hash="c.imageHash" :title="c.title" wrapper-class="aspect-[16/10] rounded-xl" />
                 <div class="mt-3 font-semibold text-sm line-clamp-1">{{ c.title }}</div>
                 <div class="text-xs text-slate-500">{{ c.lessonsCount }} уроков · {{ c.priceFormatted }}</div>
               </div>
@@ -42,7 +42,7 @@
       <!-- Courses -->
       <section class="max-w-7xl mx-auto px-4 mt-20">
         <SectionTitle title="Популярные курсы" subtitle="Программы, с которых чаще всего начинают" :link-href="coursesRoute.url()" link-text="Все курсы" />
-        <EmptyState v-if="!courses.length" emoji="📘" title="Курсов пока нет" text="Наполните школу демо-курсами одним кликом или добавьте свои через панель управления.">
+        <EmptyState v-if="!courses.length" icon="book" title="Курсов пока нет" text="Наполните школу демо-курсами одним кликом или добавьте свои через панель управления.">
           <button type="button" class="h-11 px-5 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700 disabled:opacity-50" :disabled="seeding" @click="seed">{{ seeding ? 'Наполняем…' : 'Наполнить демо-курсами' }}</button>
         </EmptyState>
         <div v-else class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -57,7 +57,7 @@
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div v-for="(s, i) in STEPS" :key="s.title" class="rounded-2xl bg-white border border-slate-200/80 p-6">
             <div class="flex items-center justify-between">
-              <span class="text-4xl">{{ s.emoji }}</span>
+              <span class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 grid place-items-center"><Icon :name="s.icon" size="w-6 h-6" /></span>
               <span class="text-sm font-bold text-slate-300">0{{ i + 1 }}</span>
             </div>
             <div class="mt-4 font-bold">{{ s.title }}</div>
@@ -71,7 +71,7 @@
         <SectionTitle title="Преподаватели" subtitle="Практики, которые каждый день делают то, чему учат" />
         <div class="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 snap-x">
           <div v-for="t in teachers" :key="t.name" class="snap-start shrink-0 w-64 rounded-2xl bg-white border border-slate-200/80 p-5">
-            <div class="w-16 h-16 rounded-2xl bg-indigo-50 grid place-items-center text-4xl">{{ t.emoji }}</div>
+            <Avatar :image-hash="t.imageHash" :name="t.name" size-class="w-20 h-20" text-class="text-xl" />
             <div class="mt-4 font-bold">{{ t.name }}</div>
             <div class="text-sm text-slate-500">{{ t.title }}</div>
             <a :href="courseRoute.query({ id: t.courseId }).url()" class="mt-3 inline-block text-sm text-indigo-600 hover:underline">{{ t.course }}</a>
@@ -86,7 +86,7 @@
           <figure v-for="t in TESTIMONIALS" :key="t.name" class="rounded-2xl bg-slate-900 text-white p-6 flex flex-col">
             <blockquote class="text-sm leading-relaxed text-slate-200 flex-1">«{{ t.text }}»</blockquote>
             <figcaption class="mt-5 flex items-center gap-3">
-              <span class="w-10 h-10 rounded-full bg-white/10 grid place-items-center text-xl">{{ t.emoji }}</span>
+              <Avatar :image-hash="t.imageHash" :name="t.name" size-class="w-10 h-10" />
               <div><div class="font-semibold text-sm">{{ t.name }}</div><div class="text-xs text-slate-400">{{ t.role }}</div></div>
             </figcaption>
           </figure>
@@ -131,6 +131,7 @@ import Icon from '../components/Icon.vue'
 import SectionTitle from '../components/SectionTitle.vue'
 import CourseCard from '../components/CourseCard.vue'
 import CourseCover from '../components/CourseCover.vue'
+import Avatar from '../components/Avatar.vue'
 import EmptyState from '../components/EmptyState.vue'
 import { SCHOOL } from '../shared/config'
 import { FAQ, STEPS, TESTIMONIALS } from '../shared/content'
@@ -145,7 +146,7 @@ const teachers = computed(() => {
   const seen = new Set<string>()
   return props.courses
     .filter(c => (seen.has(c.teacherName) ? false : (seen.add(c.teacherName), true)))
-    .map(c => ({ name: c.teacherName, title: c.teacherTitle, emoji: c.teacherEmoji, course: c.title, courseId: c.id }))
+    .map(c => ({ name: c.teacherName, title: c.teacherTitle, imageHash: c.teacherImageHash, course: c.title, courseId: c.id }))
 })
 
 const seeding = ref(false)

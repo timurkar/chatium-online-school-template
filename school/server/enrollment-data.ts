@@ -7,7 +7,7 @@ export type EnrollmentData = {
   id: string
   courseId: string
   courseTitle: string
-  courseEmoji: string
+  courseImageHash: string | null
   userId: string
   studentName: string
   studentContact: string
@@ -23,7 +23,7 @@ export function toEnrollmentData(row: typeof Enrollments.T, course: typeof Cours
     id: row.id,
     courseId: row.course.id,
     courseTitle: course?.title ?? 'Курс удалён',
-    courseEmoji: course?.emoji ?? '📘',
+    courseImageHash: course?.imageHash ?? null,
     userId: row.user.id,
     studentName: row.studentName,
     studentContact: row.studentContact,

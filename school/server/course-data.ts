@@ -10,7 +10,6 @@ export type CourseData = {
   description: string
   fullDescription: string
   whatYouLearn: string[]
-  emoji: string
   imageHash: string | null
   price: number
   priceFormatted: string
@@ -22,7 +21,7 @@ export type CourseData = {
   durationWeeks: number
   teacherName: string
   teacherTitle: string
-  teacherEmoji: string
+  teacherImageHash: string | null
   status: 'active' | 'draft'
   featured: boolean
   sortOrder: number
@@ -90,7 +89,6 @@ export function toCourseData(ctx: app.Ctx, row: typeof Courses.T, lessons: Array
     description: row.description,
     fullDescription: row.fullDescription,
     whatYouLearn: row.whatYouLearn,
-    emoji: row.emoji,
     imageHash: row.imageHash ?? null,
     price: row.price.amount,
     priceFormatted: row.price.amount > 0 ? row.price.format(ctx, moneyFormat) : 'Бесплатно',
@@ -102,7 +100,7 @@ export function toCourseData(ctx: app.Ctx, row: typeof Courses.T, lessons: Array
     durationWeeks: row.durationWeeks,
     teacherName: row.teacherName,
     teacherTitle: row.teacherTitle,
-    teacherEmoji: row.teacherEmoji,
+    teacherImageHash: row.teacherImageHash ?? null,
     status: row.status,
     featured: row.featured,
     sortOrder: row.sortOrder,

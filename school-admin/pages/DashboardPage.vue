@@ -22,7 +22,7 @@
 
       <!-- Courses -->
       <section v-if="tab === 'courses'" class="mt-6">
-        <EmptyState v-if="!courses.length" emoji="📘" title="Курсов пока нет" text="Создайте первый курс или наполните школу демо-курсами.">
+        <EmptyState v-if="!courses.length" icon="book" title="Курсов пока нет" text="Создайте первый курс или наполните школу демо-курсами.">
           <a :href="adminCourseRoute.url()" class="h-11 px-5 rounded-full bg-indigo-600 text-white font-medium inline-flex items-center">Создать курс</a>
           <button type="button" class="h-11 px-5 rounded-full border border-slate-300 font-medium hover:bg-white" :disabled="busy" @click="seed">Демо-курсы</button>
         </EmptyState>
@@ -35,7 +35,7 @@
               <tr v-for="c in courses" :key="c.id" class="hover:bg-slate-50/70">
                 <td class="p-4">
                   <div class="flex items-center gap-3">
-                    <CourseCover :image-hash="c.imageHash" :emoji="c.emoji" :title="c.title" :seed="c.id" :width="120" wrapper-class="w-14 h-10 rounded-lg shrink-0" emoji-class="text-xl" />
+                    <CourseCover :image-hash="c.imageHash" :title="c.title" :width="120" wrapper-class="w-14 h-10 rounded-lg shrink-0" icon-size="w-4 h-4" />
                     <div class="min-w-0">
                       <a :href="adminCourseRoute.query({ id: c.id }).url()" class="font-medium hover:underline line-clamp-1">{{ c.title }}</a>
                       <div class="text-xs text-slate-400">{{ c.teacherName }}<span v-if="c.featured"> · ★ на главной</span></div>
@@ -66,7 +66,7 @@
           <button type="button" class="h-9 px-3 rounded-full text-sm border" :class="statusFilter === '' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white border-slate-300'" @click="statusFilter = ''">Все</button>
           <button v-for="(label, key) in ENROLLMENT_STATUSES" :key="key" type="button" class="h-9 px-3 rounded-full text-sm border" :class="statusFilter === key ? 'bg-slate-900 text-white border-slate-900' : 'bg-white border-slate-300'" @click="statusFilter = key">{{ label }}</button>
         </div>
-        <EmptyState v-if="!filteredEnrollments.length" emoji="🎓" title="Пока никого" text="Здесь появятся заявки и записи студентов." />
+        <EmptyState v-if="!filteredEnrollments.length" icon="graduation" title="Пока никого" text="Здесь появятся заявки и записи студентов." />
         <div v-else class="bg-white rounded-2xl border border-slate-200/80 overflow-x-auto">
           <table class="w-full text-sm min-w-[760px]">
             <thead class="text-left text-xs uppercase tracking-wide text-slate-400 border-b border-slate-100">
@@ -78,7 +78,7 @@
                   <div class="font-medium">{{ e.studentName }}</div>
                   <div class="text-xs text-slate-500">{{ e.studentContact }}</div>
                 </td>
-                <td class="p-4">{{ e.courseEmoji }} {{ e.courseTitle }}</td>
+                <td class="p-4">{{ e.courseTitle }}</td>
                 <td class="p-4 w-48"><ProgressBar :done="e.completedLessons.length" :total="lessonsTotal(e.courseId)" :show-label="false" /><div class="text-xs text-slate-400 mt-1">{{ e.completedLessons.length }} / {{ lessonsTotal(e.courseId) }}</div></td>
                 <td class="p-4 text-slate-500 whitespace-nowrap">{{ formatDate(e.createdAt) }}</td>
                 <td class="p-4">
@@ -152,7 +152,6 @@ function toggleStatus(c: any) {
       description: c.description,
       fullDescription: c.fullDescription,
       whatYouLearn: c.whatYouLearn,
-      emoji: c.emoji,
       imageHash: c.imageHash ?? undefined,
       price: c.price,
       oldPrice: c.oldPrice ?? undefined,
@@ -160,7 +159,7 @@ function toggleStatus(c: any) {
       durationWeeks: c.durationWeeks,
       teacherName: c.teacherName,
       teacherTitle: c.teacherTitle,
-      teacherEmoji: c.teacherEmoji,
+      teacherImageHash: c.teacherImageHash ?? undefined,
       status: c.status === 'active' ? 'draft' : 'active',
       featured: c.featured,
       sortOrder: c.sortOrder,

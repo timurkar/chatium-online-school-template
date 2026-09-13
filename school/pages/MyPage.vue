@@ -10,13 +10,13 @@
         <div><div class="font-semibold">Заявка принята</div><div class="text-sm">Менеджер свяжется с вами, чтобы подтвердить запись и помочь с оплатой. Открытые уроки курса доступны уже сейчас.</div></div>
       </div>
 
-      <EmptyState v-if="!enrollments.length" class="mt-8" emoji="🎓" title="Вы пока не записаны ни на один курс" text="Выберите курс — первые уроки открыты бесплатно.">
+      <EmptyState v-if="!enrollments.length" class="mt-8" icon="graduation" title="Вы пока не записаны ни на один курс" text="Выберите курс — первые уроки открыты бесплатно.">
         <a :href="coursesRoute.url()" class="h-11 px-5 rounded-full bg-indigo-600 text-white font-medium inline-flex items-center">Смотреть курсы</a>
       </EmptyState>
 
       <div v-else class="mt-8 space-y-4">
         <div v-for="e in enrollments" :key="e.id" class="rounded-2xl bg-white border border-slate-200/80 p-5 flex flex-col sm:flex-row sm:items-center gap-5">
-          <span class="w-16 h-16 rounded-2xl bg-indigo-50 grid place-items-center text-4xl shrink-0">{{ e.courseEmoji }}</span>
+          <CourseCover :image-hash="e.courseImageHash" :title="e.courseTitle" :width="200" wrapper-class="w-24 h-16 rounded-xl shrink-0" icon-size="w-6 h-6" />
           <div class="flex-1 min-w-0">
             <div class="flex flex-wrap items-center gap-2">
               <a :href="courseRoute.query({ id: e.courseId }).url()" class="font-bold text-lg hover:underline">{{ e.courseTitle }}</a>
@@ -51,6 +51,7 @@ import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import Icon from '../components/Icon.vue'
 import ProgressBar from '../components/ProgressBar.vue'
+import CourseCover from '../components/CourseCover.vue'
 import EmptyState from '../components/EmptyState.vue'
 import { ENROLLMENT_STATUSES, EnrollmentStatus } from '../shared/config'
 import { indexRoute } from '../index'

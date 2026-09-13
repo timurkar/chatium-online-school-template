@@ -29,7 +29,7 @@
 
       <!-- Content -->
       <main class="order-1 lg:order-2 min-w-0">
-        <EmptyState v-if="!lesson" emoji="📭" title="В курсе пока нет уроков" text="Загляните позже — материалы скоро появятся." />
+        <EmptyState v-if="!lesson" icon="book" title="В курсе пока нет уроков" text="Загляните позже — материалы скоро появятся." />
 
         <template v-else-if="!canAccess">
           <div class="rounded-3xl bg-slate-900 text-white p-8 md:p-12">

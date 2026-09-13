@@ -20,7 +20,7 @@
 
       <div class="mt-8" :aria-busy="loading">
         <p v-if="error" class="text-rose-600">{{ error }}</p>
-        <EmptyState v-else-if="!loading && !courses.length" emoji="🔍" title="Ничего не нашли" text="Попробуйте изменить запрос или выбрать другой уровень.">
+        <EmptyState v-else-if="!loading && !courses.length" icon="search" title="Ничего не нашли" text="Попробуйте изменить запрос или выбрать другой уровень.">
           <a :href="coursesRoute.url()" class="h-11 px-5 rounded-full bg-slate-900 text-white font-medium inline-flex items-center">Показать все курсы</a>
         </EmptyState>
         <div v-else class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" :class="{ 'opacity-50': loading }">

@@ -1,4 +1,4 @@
-/** Демо-курсы для быстрого старта. Замените на свои или удалите после запуска. */
+/** Демо-курсы для быстрого старта. Фото — CC0 (Unsplash через Wikimedia Commons), уже загружены в хранилище Chatium. */
 
 /** Открытый демо-ролик (Big Buck Bunny, лицензия CC BY) — чтобы плеер было видно сразу. */
 const DEMO_VIDEO = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
@@ -10,14 +10,14 @@ export type DemoCourse = {
   description: string
   fullDescription: string
   whatYouLearn: string[]
-  emoji: string
+  imageHash: string
   price: number
   oldPrice?: number
   level: 'beginner' | 'intermediate' | 'advanced'
   durationWeeks: number
   teacherName: string
   teacherTitle: string
-  teacherEmoji: string
+  teacherImageHash: string
   featured?: boolean
   lessons: DemoLesson[]
 }
@@ -39,14 +39,14 @@ export const DEMO_COURSES: DemoCourse[] = [
     fullDescription:
       'Курс для тех, кто хочет войти в дизайн интерфейсов без опыта. Мы разберём принципы UX-исследований, научимся собирать макеты в Figma, работать с типографикой и цветом, а в конце соберём кликабельный прототип приложения и оформим кейс для портфолио.',
     whatYouLearn: ['Проводить UX-исследования и строить CJM', 'Уверенно работать в Figma', 'Собирать дизайн-систему', 'Оформлять кейс для портфолио'],
-    emoji: '🎨',
+    imageHash: 'image_msk_KuL2ZJocaR.1600x1067.jpeg',
     price: 24900,
     oldPrice: 32000,
     level: 'beginner',
     durationWeeks: 8,
     teacherName: 'Алина Ковалёва',
     teacherTitle: 'Lead Product Designer, 9 лет в продуктах',
-    teacherEmoji: '👩‍🎨',
+    teacherImageHash: 'image_msk_xCAbhjTCUu.1067x1600.jpeg',
     featured: true,
     lessons: [
       lesson('Что такое UX и UI', 'Разбираемся, чем занимается дизайнер интерфейсов и как устроен процесс.', 14, { free: true, video: DEMO_VIDEO }),
@@ -64,13 +64,13 @@ export const DEMO_COURSES: DemoCourse[] = [
     fullDescription:
       'Практический курс по Vue 3 и Composition API. Начнём с основ реактивности и постепенно соберём полноценное SPA-приложение с авторизацией, списками, формами и загрузкой данных. Каждый модуль заканчивается заданием с проверкой наставником.',
     whatYouLearn: ['Composition API и реактивность', 'Компоненты, слоты и пропсы', 'Работа с API и состоянием', 'Сборка и деплой приложения'],
-    emoji: '💻',
+    imageHash: 'image_msk_qzIimhDMaW.1600x1600.jpeg',
     price: 29900,
     level: 'intermediate',
     durationWeeks: 10,
     teacherName: 'Дмитрий Орлов',
     teacherTitle: 'Senior Frontend Engineer',
-    teacherEmoji: '👨‍💻',
+    teacherImageHash: 'image_msk_E436hpyYk6.1600x1600.jpeg',
     featured: true,
     lessons: [
       lesson('Зачем нужен Vue', 'Обзор экосистемы и первое приложение.', 12, { free: true, video: DEMO_VIDEO }),
@@ -87,14 +87,14 @@ export const DEMO_COURSES: DemoCourse[] = [
     fullDescription:
       'Курс для маркетологов, предпринимателей и авторов. Научимся определять аудиторию, строить контент-стратегию, писать тексты для соцсетей и рассылок, измерять результат и улучшать его.',
     whatYouLearn: ['Строить контент-стратегию', 'Писать тексты, которые читают', 'Запускать рассылки', 'Считать эффективность контента'],
-    emoji: '📣',
+    imageHash: 'image_msk_4K2tLBIj16.1600x1067.jpeg',
     price: 14900,
     oldPrice: 19900,
     level: 'beginner',
     durationWeeks: 5,
     teacherName: 'Ольга Никитина',
     teacherTitle: 'Head of Content, ex-агентство',
-    teacherEmoji: '👩‍💼',
+    teacherImageHash: 'image_msk_uJ0Du3CP8T.1067x1600.jpeg',
     featured: true,
     lessons: [
       lesson('Кому и зачем мы пишем', 'Аудитория, боли и обещание бренда.', 15, { free: true, video: DEMO_VIDEO }),
@@ -110,13 +110,13 @@ export const DEMO_COURSES: DemoCourse[] = [
     fullDescription:
       'Курс для аналитиков и всех, кто работает с таблицами. Освоим Python с нуля, научимся чистить и объединять данные в Pandas, строить графики и делать выводы, а в финале соберём отчёт по реальному датасету.',
     whatYouLearn: ['Основы Python', 'Обработка данных в Pandas', 'Визуализация в Matplotlib', 'Построение отчётов'],
-    emoji: '🐍',
+    imageHash: 'image_msk_jthHkced8H.1600x1140.jpeg',
     price: 19900,
     level: 'beginner',
     durationWeeks: 6,
     teacherName: 'Сергей Волков',
     teacherTitle: 'Data Analyst, финтех',
-    teacherEmoji: '🧑‍🔬',
+    teacherImageHash: 'image_msk_uJegD2lsmq.1067x1600.jpeg',
     lessons: [
       lesson('Первая программа на Python', 'Установка, переменные, типы данных.', 16, { free: true, video: DEMO_VIDEO }),
       lesson('Списки, словари и циклы', 'Основные структуры данных.', 20, { free: true }),
@@ -131,13 +131,13 @@ export const DEMO_COURSES: DemoCourse[] = [
     fullDescription:
       'Короткий бесплатный курс из четырёх уроков. Разберём структуру выступления, работу с волнением, голосом и слайдами. Подойдёт всем, кто презентует проекты, проводит встречи или готовится к первому докладу.',
     whatYouLearn: ['Строить структуру выступления', 'Справляться с волнением', 'Работать с голосом и паузами', 'Делать понятные слайды'],
-    emoji: '🎤',
+    imageHash: 'image_msk_Wfe4ixRU5b.1600x1067.jpeg',
     price: 0,
     level: 'beginner',
     durationWeeks: 1,
     teacherName: 'Марк Соколов',
     teacherTitle: 'Тренер по коммуникациям',
-    teacherEmoji: '🧑‍🏫',
+    teacherImageHash: 'image_msk_4u79ZAYwrO.1600x1067.jpeg',
     featured: true,
     lessons: [
       lesson('Структура выступления', 'Начало, аргументы и финал.', 12, { free: true, video: DEMO_VIDEO }),
@@ -152,13 +152,13 @@ export const DEMO_COURSES: DemoCourse[] = [
     fullDescription:
       'Продвинутый курс для разработчиков с опытом. Обсуждаем принципы проектирования, границы контекстов, очереди и кеширование, наблюдаемость и надёжность. Каждый модуль — разбор реального кейса и практическое задание.',
     whatYouLearn: ['Проектировать границы модулей', 'Выбирать между монолитом и сервисами', 'Работать с очередями и кешами', 'Строить наблюдаемые системы'],
-    emoji: '🏗️',
+    imageHash: 'image_msk_LPZiceuaF3.1600x1068.jpeg',
     price: 39900,
     level: 'advanced',
     durationWeeks: 8,
     teacherName: 'Илья Громов',
     teacherTitle: 'Staff Engineer, высоконагруженные системы',
-    teacherEmoji: '🧔',
+    teacherImageHash: 'image_msk_PMGRS4HXTL.1037x1600.jpeg',
     lessons: [
       lesson('Что такое хорошая архитектура', 'Критерии и антипаттерны.', 18, { free: true, video: DEMO_VIDEO }),
       lesson('Модульный монолит', 'Как не превратить проект в клубок.', 22),

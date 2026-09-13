@@ -8,7 +8,7 @@
 
       <form class="mt-8 grid lg:grid-cols-[300px_1fr] gap-8 items-start" @submit.prevent="save">
         <div class="space-y-3">
-          <CourseCover :image-hash="form.imageHash || null" :emoji="form.emoji || '📘'" :title="form.title || 'Курс'" :seed="course?.id ?? form.title" wrapper-class="aspect-[16/10] rounded-2xl" emoji-class="text-7xl" />
+          <CourseCover :image-hash="form.imageHash || null" :title="form.title || 'Курс'" wrapper-class="aspect-[16/10] rounded-2xl" icon-size="w-14 h-14" />
           <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="onFile" />
           <button type="button" class="w-full h-11 rounded-full border border-slate-300 font-medium inline-flex items-center justify-center gap-2 hover:bg-white disabled:opacity-50" :disabled="uploading" @click="fileInput?.click()">
             <Icon :name="uploading ? 'spinner' : 'image'" :size="uploading ? 'w-4 h-4 animate-spin' : 'w-4 h-4'" />
@@ -16,16 +16,14 @@
           </button>
           <button v-if="form.imageHash" type="button" class="w-full text-sm text-slate-500 hover:text-rose-600" @click="form.imageHash = ''">Убрать обложку</button>
           <p v-if="uploadError" class="text-sm text-rose-600">{{ uploadError }}</p>
-          <label class="block">
-            <span class="text-sm text-slate-600">Эмодзи-обложка (если нет фото)</span>
-            <input v-model="form.emoji" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-300 outline-none focus:border-indigo-500 text-center text-xl" placeholder="📘" />
-          </label>
           <div class="rounded-2xl bg-white border border-slate-200/80 p-4 space-y-3">
             <div class="font-semibold text-sm">Преподаватель</div>
-            <div class="flex gap-2">
-              <input v-model="form.teacherEmoji" class="w-14 h-11 text-center rounded-xl border border-slate-300 text-xl" placeholder="🧑‍🏫" />
-              <input v-model="form.teacherName" class="flex-1 h-11 px-3 rounded-xl border border-slate-300 outline-none focus:border-indigo-500" placeholder="Имя" />
+            <div class="flex items-center gap-3">
+              <Avatar :image-hash="form.teacherImageHash || null" :name="form.teacherName || 'Преподаватель'" size-class="w-14 h-14" />
+              <input ref="teacherInput" type="file" accept="image/*" class="hidden" @change="onTeacherFile" />
+              <button type="button" class="h-10 px-4 rounded-full border border-slate-300 text-sm font-medium hover:bg-white disabled:opacity-50" :disabled="uploadingTeacher" @click="teacherInput?.click()">{{ uploadingTeacher ? 'Загружаем…' : form.teacherImageHash ? 'Заменить фото' : 'Фото преподавателя' }}</button>
             </div>
+            <input v-model="form.teacherName" class="w-full h-11 px-3 rounded-xl border border-slate-300 outline-none focus:border-indigo-500" placeholder="Имя" />
             <input v-model="form.teacherTitle" class="w-full h-11 px-3 rounded-xl border border-slate-300 outline-none focus:border-indigo-500" placeholder="Должность, опыт" />
           </div>
         </div>
@@ -164,6 +162,7 @@ import { obtainStorageFilePutUrl } from '@app/storage'
 import AdminHeader from '../components/AdminHeader.vue'
 import Icon from '../../school/components/Icon.vue'
 import CourseCover from '../../school/components/CourseCover.vue'
+import Avatar from '../../school/components/Avatar.vue'
 import { LEVELS } from '../../school/shared/config'
 import { pluralize } from '../../school/shared/format'
 import { adminRoute } from '../index'
@@ -182,7 +181,6 @@ const form = reactive({
   description: props.course?.description ?? '',
   fullDescription: props.course?.fullDescription ?? '',
   whatYouLearnText: (props.course?.whatYouLearn ?? []).join('\n'),
-  emoji: props.course?.emoji ?? '',
   imageHash: props.course?.imageHash ?? '',
   price: props.course?.price ?? 0,
   oldPrice: props.course?.oldPrice ?? null,
@@ -190,13 +188,15 @@ const form = reactive({
   durationWeeks: props.course?.durationWeeks ?? 4,
   teacherName: props.course?.teacherName ?? '',
   teacherTitle: props.course?.teacherTitle ?? '',
-  teacherEmoji: props.course?.teacherEmoji ?? '',
+  teacherImageHash: props.course?.teacherImageHash ?? '',
   featured: props.course?.featured ?? false,
   status: (props.course?.status ?? 'active') as 'active' | 'draft',
 })
 const published = computed({ get: () => form.status === 'active', set: v => (form.status = v ? 'active' : 'draft') })
 
 const fileInput = ref<HTMLInputElement | null>(null)
+const teacherInput = ref<HTMLInputElement | null>(null)
+const uploadingTeacher = ref(false)
 const uploading = ref(false)
 const uploadError = ref('')
 const saving = ref(false)
@@ -230,13 +230,35 @@ async function onFile(event: Event) {
   }
 }
 
+async function onTeacherFile(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  uploadingTeacher.value = true
+  uploadError.value = ''
+  try {
+    const putUrl = await obtainStorageFilePutUrl(ctx, { getPutUrl: props.uploadUrl })
+    const body = new FormData()
+    body.append('Filedata', file)
+    const response = await fetch(putUrl, { method: 'POST', body })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const hash = (await response.text()).trim()
+    if (!hash) throw new Error('Пустой ответ хранилища')
+    form.teacherImageHash = hash
+  } catch (e: any) {
+    uploadError.value = 'Не удалось загрузить фото: ' + (e?.message || 'ошибка')
+  } finally {
+    uploadingTeacher.value = false
+    input.value = ''
+  }
+}
+
 function payload() {
   return {
     title: form.title,
     description: form.description,
     fullDescription: form.fullDescription,
     whatYouLearn: form.whatYouLearnText.split('\n').map((s: string) => s.trim()).filter(Boolean),
-    emoji: form.emoji || undefined,
     imageHash: form.imageHash || undefined,
     price: Number(form.price) || 0,
     oldPrice: form.oldPrice ? Number(form.oldPrice) : undefined,
@@ -244,7 +266,7 @@ function payload() {
     durationWeeks: Math.max(1, Math.floor(Number(form.durationWeeks) || 1)),
     teacherName: form.teacherName,
     teacherTitle: form.teacherTitle,
-    teacherEmoji: form.teacherEmoji || undefined,
+    teacherImageHash: form.teacherImageHash || undefined,
     status: form.status,
     featured: form.featured,
   }

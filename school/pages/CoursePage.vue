@@ -24,14 +24,14 @@
               <span class="inline-flex items-center gap-2"><Icon name="graduation" size="w-4 h-4" /> {{ course.durationWeeks }} {{ pluralize(course.durationWeeks, 'неделя', 'недели', 'недель') }}</span>
             </div>
             <div class="mt-8 flex items-center gap-3">
-              <span class="w-12 h-12 rounded-full bg-white/10 grid place-items-center text-2xl">{{ course.teacherEmoji }}</span>
+              <Avatar :image-hash="course.teacherImageHash" :name="course.teacherName" size-class="w-12 h-12" />
               <div><div class="font-semibold">{{ course.teacherName }}</div><div class="text-sm text-slate-400">{{ course.teacherTitle }}</div></div>
             </div>
           </div>
 
           <!-- Enroll card -->
           <aside class="rounded-2xl bg-white text-slate-900 p-6 shadow-xl lg:sticky lg:top-24">
-            <CourseCover :image-hash="course.imageHash" :emoji="course.emoji" :title="course.title" :seed="course.id" wrapper-class="aspect-[16/10] rounded-xl" emoji-class="text-6xl" />
+            <CourseCover :image-hash="course.imageHash" :title="course.title" wrapper-class="aspect-[16/10] rounded-xl" />
             <div class="mt-5 flex items-baseline gap-3">
               <span class="text-3xl font-black" :class="course.isFree ? 'text-emerald-600' : ''">{{ course.priceFormatted }}</span>
               <span v-if="course.oldPriceFormatted" class="text-slate-400 line-through">{{ course.oldPriceFormatted }}</span>
@@ -111,7 +111,7 @@
           <div class="rounded-2xl bg-white border border-slate-200/80 p-6">
             <h3 class="font-bold">Преподаватель</h3>
             <div class="mt-4 flex items-center gap-4">
-              <span class="w-16 h-16 rounded-2xl bg-indigo-50 grid place-items-center text-4xl">{{ course.teacherEmoji }}</span>
+              <Avatar :image-hash="course.teacherImageHash" :name="course.teacherName" size-class="w-16 h-16" text-class="text-lg" />
               <div><div class="font-semibold">{{ course.teacherName }}</div><div class="text-sm text-slate-500">{{ course.teacherTitle }}</div></div>
             </div>
           </div>
@@ -134,6 +134,7 @@ import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import Icon from '../components/Icon.vue'
 import CourseCover from '../components/CourseCover.vue'
+import Avatar from '../components/Avatar.vue'
 import ProgressBar from '../components/ProgressBar.vue'
 import { formatDuration, pluralize } from '../shared/format'
 import { indexRoute } from '../index'
