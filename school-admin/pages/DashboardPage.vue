@@ -13,6 +13,21 @@
         </a>
       </div>
 
+
+      <!-- Демо-данные -->
+      <section v-if="!courses.length" class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div class="flex-1">
+          <div class="font-bold">Таблицы пустые — начните с демо-данных</div>
+          <p class="mt-1 text-sm text-slate-600">Загрузим 6 курсов с обложками, преподавателями и 33 уроками (первые уроки открытые, с демо-видео). Потом всё можно отредактировать или удалить.</p>
+        </div>
+        <button type="button" class="h-11 px-5 rounded-full bg-slate-900 text-white font-medium hover:bg-slate-700 disabled:opacity-50 shrink-0" :disabled="busy" @click="seed(false)">{{ busy ? 'Наполняем…' : 'Наполнить демо-данными' }}</button>
+      </section>
+      <p v-else class="mt-4 text-xs text-slate-400">
+        Нужен чистый старт?
+        <button type="button" class="underline hover:text-slate-700" :disabled="busy" @click="seed(true)">сбросить и наполнить демо-данными заново</button>
+        (удалит все курсы и уроки, записи студентов не тронет).
+      </p>
+
       <div class="mt-6 inline-flex p-1 rounded-full bg-slate-200/70 text-sm font-medium">
         <button type="button" class="h-9 px-4 rounded-full transition" :class="tab === 'courses' ? 'bg-white shadow-sm' : 'text-slate-500 hover:text-slate-900'" @click="tab = 'courses'">Курсы <span class="ml-1 text-xs text-slate-400">{{ courses.length }}</span></button>
         <button type="button" class="h-9 px-4 rounded-full transition" :class="tab === 'students' ? 'bg-white shadow-sm' : 'text-slate-500 hover:text-slate-900'" @click="tab = 'students'">Студенты <span class="ml-1 text-xs" :class="pendingCount ? 'text-amber-600 font-bold' : 'text-slate-400'">{{ pendingCount ? pendingCount + ' новых' : enrollments.length }}</span></button>
@@ -24,7 +39,7 @@
       <section v-if="tab === 'courses'" class="mt-6">
         <EmptyState v-if="!courses.length" icon="book" title="Курсов пока нет" text="Создайте первый курс или наполните школу демо-курсами.">
           <a :href="adminCourseRoute.url()" class="h-11 px-5 rounded-full bg-indigo-600 text-white font-medium inline-flex items-center">Создать курс</a>
-          <button type="button" class="h-11 px-5 rounded-full border border-slate-300 font-medium hover:bg-white" :disabled="busy" @click="seed">Демо-курсы</button>
+          <button type="button" class="h-11 px-5 rounded-full border border-slate-300 font-medium hover:bg-white" :disabled="busy" @click="seed(false)">Демо-курсы</button>
         </EmptyState>
         <div v-else class="bg-white rounded-2xl border border-slate-200/80 overflow-x-auto">
           <table class="w-full text-sm min-w-[760px]">
@@ -183,9 +198,14 @@ function setStatus(e: any, status: string) {
   })
 }
 
-function seed() {
+function seed(reset: boolean) {
+  if (reset && !window.confirm('Удалить все курсы и уроки и наполнить школу демо-курсами заново?')) return
   return run(async () => {
-    await seedRoute.run(ctx)
+    const result = await seedRoute.query(reset ? { reset: '1' } : {}).run(ctx)
+    if (!result.seeded) {
+      error.value = 'reason' in result ? String(result.reason) : 'Данные уже есть'
+      return
+    }
     window.location.reload()
   })
 }
