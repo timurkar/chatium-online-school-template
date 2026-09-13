@@ -1,3 +1,4 @@
+import { requireAccountRole } from '@app/auth'
 import { Money } from '@app/heap'
 import Courses from './tables/courses.table'
 import Lessons from './tables/lessons.table'
@@ -7,8 +8,17 @@ import { SCHOOL } from './shared/config'
 /**
  * GET /seed — наполняет школу демо-курсами. Идемпотентно: если курсы уже есть, ничего не делает,
  * поэтому роут открыт без авторизации — удобно для первого запуска шаблона.
+ *
+ * GET /seed?reset=1 (только Staff) — удаляет все курсы и уроки и наполняет заново. Записи студентов не трогает.
  */
-export const seedRoute = app.get('/', async ctx => {
+export const seedRoute = app.get('/')
+  .query(s => ({ reset: s.string().optional() }))
+  .handle(async (ctx, req) => {
+  if (req.query.reset === '1') {
+    requireAccountRole(ctx, 'Staff')
+    for (const row of await Lessons.findAll(ctx, { limit: 1000 })) await Lessons.delete(ctx, row.id)
+    for (const row of await Courses.findAll(ctx, { limit: 1000 })) await Courses.delete(ctx, row.id)
+  }
   const existing = await Courses.countBy(ctx)
   if (existing > 0) return { seeded: false, reason: `Уже есть ${existing} курсов` }
 
