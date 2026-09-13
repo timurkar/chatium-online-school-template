@@ -4,6 +4,7 @@ import { Page } from './layout'
 import { getPublicCourse, lessonOrder, toLessonFull, toLessonMeta } from './server/course-data'
 import { findEnrollment } from './server/enrollment-data'
 import LearnPage from './pages/LearnPage.vue'
+import { adminLessonRoute } from '../school-admin/lesson'
 import NotFoundPage from './pages/NotFoundPage.vue'
 
 /**
@@ -32,6 +33,7 @@ export const learnRoute = app.get('/')
     const resume = enrollment?.lastLessonId ? rows.find(r => r.id === enrollment.lastLessonId) : undefined
     const current = requested ?? resume ?? rows.find(r => !completed.includes(r.id)) ?? rows[0]
     const canAccess = !!current && (current.isFree || enrolled || isStaff)
+    const adminUrl = isStaff && current ? adminLessonRoute.query({ course: course.id, id: current.id }).url() : null
 
     return (
       <Page title={current ? `${current.title} — ${course.title}` : course.title}>
@@ -44,6 +46,7 @@ export const learnRoute = app.get('/')
           enrollmentStatus={enrollment ? enrollment.status : null}
           signedIn={!!user}
           completedLessons={completed}
+          adminUrl={adminUrl}
         />
       </Page>
     )

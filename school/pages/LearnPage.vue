@@ -44,11 +44,15 @@
         </template>
 
         <template v-else>
-          <div class="text-sm text-slate-500">Урок {{ index + 1 }} из {{ lessons.length }} · {{ lesson.durationMinutes }} мин</div>
+          <div class="flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500">
+            <span>Урок {{ index + 1 }} из {{ lessons.length }} · {{ lesson.durationMinutes }} мин</span>
+            <a v-if="adminUrl" :href="adminUrl" class="inline-flex items-center gap-1.5 px-3 h-8 rounded-full bg-amber-50 text-amber-800 hover:bg-amber-100"><Icon name="edit" size="w-3.5 h-3.5" /> Редактировать урок</a>
+          </div>
           <h1 class="mt-1 text-2xl md:text-4xl font-black tracking-tight">{{ lesson.title }}</h1>
 
-          <div class="mt-6 rounded-2xl overflow-hidden bg-slate-900 aspect-video">
-            <iframe v-if="embedUrl" :src="embedUrl" class="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <div class="mt-6 rounded-2xl overflow-hidden bg-slate-900" :class="lesson.videoHash ? '' : 'aspect-video'">
+            <StorageVideoPlayer v-if="lesson.videoHash" :key="lesson.videoHash" :hash="lesson.videoHash" />
+            <iframe v-else-if="embedUrl" :src="embedUrl" class="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             <video v-else-if="lesson.videoUrl && isDirectVideo(lesson.videoUrl)" :src="lesson.videoUrl" controls class="w-full h-full"></video>
             <div v-else class="w-full h-full grid place-items-center text-slate-400">
               <div class="text-center"><Icon name="play" size="w-12 h-12 mx-auto opacity-50" /><div class="mt-2 text-sm">Видео к этому уроку появится позже</div></div>
@@ -101,6 +105,7 @@ import Footer from '../components/Footer.vue'
 import Icon from '../components/Icon.vue'
 import ProgressBar from '../components/ProgressBar.vue'
 import EmptyState from '../components/EmptyState.vue'
+import StorageVideoPlayer from '@vault/sdk/StorageVideoPlayer.vue'
 import { isDirectVideo, toEmbedUrl } from '../shared/format'
 import { courseRoute } from '../course'
 import { learnRoute } from '../learn'
@@ -117,6 +122,7 @@ const props = defineProps<{
   enrollmentStatus: string | null
   signedIn: boolean
   completedLessons: string[]
+  adminUrl: string | null
 }>()
 
 const completed = ref<string[]>([...props.completedLessons])

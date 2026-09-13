@@ -1,9 +1,11 @@
 /** Демо-курсы для быстрого старта. Фото — CC0 (Unsplash через Wikimedia Commons), уже загружены в хранилище Chatium. */
 
-/** Открытый демо-ролик (Big Buck Bunny, лицензия CC BY) — чтобы плеер было видно сразу. */
-const DEMO_VIDEO = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
+/** Демо-ролик в хранилище Chatium (12 секунд, сгенерирован) — показывает плеер StorageVideoPlayer. */
+const DEMO_VIDEO_HASH = 'video_msk_lvHZFbEDZV.d12.1280x720.mp4'
+/** Внешняя ссылка на видео (Big Buck Bunny, CC BY) — пример второго способа: mp4 по URL. */
+const DEMO_VIDEO_URL = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
 
-type DemoLesson = { title: string; description: string; content: string; minutes: number; free?: boolean; video?: string }
+type DemoLesson = { title: string; description: string; content: string; minutes: number; free?: boolean; videoHash?: string; videoUrl?: string }
 
 export type DemoCourse = {
   title: string
@@ -49,8 +51,8 @@ export const DEMO_COURSES: DemoCourse[] = [
     teacherImageHash: 'image_msk_xCAbhjTCUu.1067x1600.jpeg',
     featured: true,
     lessons: [
-      lesson('Что такое UX и UI', 'Разбираемся, чем занимается дизайнер интерфейсов и как устроен процесс.', 14, { free: true, video: DEMO_VIDEO }),
-      lesson('Знакомство с Figma', 'Интерфейс, фреймы, компоненты и автолейаут.', 22, { free: true }),
+      lesson('Что такое UX и UI', 'Разбираемся, чем занимается дизайнер интерфейсов и как устроен процесс.', 14, { free: true, videoHash: DEMO_VIDEO_HASH }),
+      lesson('Знакомство с Figma', 'Интерфейс, фреймы, компоненты и автолейаут.', 22, { free: true, videoUrl: DEMO_VIDEO_URL }),
       lesson('Исследование пользователей', 'Интервью, опросы и карта пути клиента.', 18),
       lesson('Типографика и сетки', 'Как сделать макет читаемым и аккуратным.', 20),
       lesson('Цвет и визуальная иерархия', 'Палитры, контраст и акценты.', 17),
@@ -73,7 +75,7 @@ export const DEMO_COURSES: DemoCourse[] = [
     teacherImageHash: 'image_msk_E436hpyYk6.1600x1600.jpeg',
     featured: true,
     lessons: [
-      lesson('Зачем нужен Vue', 'Обзор экосистемы и первое приложение.', 12, { free: true, video: DEMO_VIDEO }),
+      lesson('Зачем нужен Vue', 'Обзор экосистемы и первое приложение.', 12, { free: true, videoHash: DEMO_VIDEO_HASH }),
       lesson('Реактивность: ref и reactive', 'Как Vue отслеживает изменения.', 19, { free: true }),
       lesson('Компоненты и пропсы', 'Разбиваем интерфейс на части.', 21),
       lesson('События и формы', 'v-model, валидация, обработка ошибок.', 18),
@@ -97,7 +99,7 @@ export const DEMO_COURSES: DemoCourse[] = [
     teacherImageHash: 'image_msk_uJ0Du3CP8T.1067x1600.jpeg',
     featured: true,
     lessons: [
-      lesson('Кому и зачем мы пишем', 'Аудитория, боли и обещание бренда.', 15, { free: true, video: DEMO_VIDEO }),
+      lesson('Кому и зачем мы пишем', 'Аудитория, боли и обещание бренда.', 15, { free: true, videoHash: DEMO_VIDEO_HASH }),
       lesson('Контент-стратегия за вечер', 'Рубрики, форматы и календарь.', 20),
       lesson('Тексты для соцсетей', 'Заголовки, структура, призыв к действию.', 18),
       lesson('Email-рассылки', 'Как не попасть в спам и получить ответы.', 17),
@@ -118,7 +120,7 @@ export const DEMO_COURSES: DemoCourse[] = [
     teacherTitle: 'Data Analyst, финтех',
     teacherImageHash: 'image_msk_uJegD2lsmq.1067x1600.jpeg',
     lessons: [
-      lesson('Первая программа на Python', 'Установка, переменные, типы данных.', 16, { free: true, video: DEMO_VIDEO }),
+      lesson('Первая программа на Python', 'Установка, переменные, типы данных.', 16, { free: true, videoHash: DEMO_VIDEO_HASH }),
       lesson('Списки, словари и циклы', 'Основные структуры данных.', 20, { free: true }),
       lesson('Знакомство с Pandas', 'DataFrame, фильтрация, группировка.', 24),
       lesson('Визуализация данных', 'Графики, которые объясняют.', 18),
@@ -140,7 +142,7 @@ export const DEMO_COURSES: DemoCourse[] = [
     teacherImageHash: 'image_msk_4u79ZAYwrO.1600x1067.jpeg',
     featured: true,
     lessons: [
-      lesson('Структура выступления', 'Начало, аргументы и финал.', 12, { free: true, video: DEMO_VIDEO }),
+      lesson('Структура выступления', 'Начало, аргументы и финал.', 12, { free: true, videoHash: DEMO_VIDEO_HASH }),
       lesson('Волнение — это нормально', 'Техники, которые работают за минуту до выхода.', 10, { free: true }),
       lesson('Голос и паузы', 'Как звучать уверенно.', 11, { free: true }),
       lesson('Слайды, которые помогают', 'Минимализм и один тезис на слайд.', 13, { free: true }),
@@ -160,7 +162,7 @@ export const DEMO_COURSES: DemoCourse[] = [
     teacherTitle: 'Staff Engineer, высоконагруженные системы',
     teacherImageHash: 'image_msk_PMGRS4HXTL.1037x1600.jpeg',
     lessons: [
-      lesson('Что такое хорошая архитектура', 'Критерии и антипаттерны.', 18, { free: true, video: DEMO_VIDEO }),
+      lesson('Что такое хорошая архитектура', 'Критерии и антипаттерны.', 18, { free: true, videoHash: DEMO_VIDEO_HASH }),
       lesson('Модульный монолит', 'Как не превратить проект в клубок.', 22),
       lesson('Очереди и события', 'Асинхронность без боли.', 25),
       lesson('Кеширование', 'Уровни кеша и инвалидация.', 20),

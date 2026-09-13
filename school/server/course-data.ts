@@ -42,7 +42,7 @@ export type LessonMeta = {
   hasVideo: boolean
 }
 
-export type LessonFull = LessonMeta & { content: string; videoUrl: string | null }
+export type LessonFull = LessonMeta & { content: string; videoHash: string | null; videoUrl: string | null }
 
 export function toLessonMeta(row: typeof Lessons.T): LessonMeta {
   return {
@@ -53,12 +53,12 @@ export function toLessonMeta(row: typeof Lessons.T): LessonMeta {
     durationMinutes: row.durationMinutes,
     isFree: row.isFree,
     sortOrder: row.sortOrder,
-    hasVideo: !!row.videoUrl,
+    hasVideo: !!(row.videoHash || row.videoUrl),
   }
 }
 
 export function toLessonFull(row: typeof Lessons.T): LessonFull {
-  return { ...toLessonMeta(row), content: row.content, videoUrl: row.videoUrl ?? null }
+  return { ...toLessonMeta(row), content: row.content, videoHash: row.videoHash ?? null, videoUrl: row.videoUrl ?? null }
 }
 
 export const lessonOrder = [{ sortOrder: 'asc' as const }, { id: 'asc' as const }]

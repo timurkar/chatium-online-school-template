@@ -14,6 +14,7 @@ export const lessonUpdateRoute = app.post('/')
       title: b.title.trim(),
       description: b.description.trim(),
       content: b.content,
+      videoHash: b.videoHash?.trim() || null,
       videoUrl: b.videoUrl?.trim() || null,
       durationMinutes: b.durationMinutes,
       isFree: b.isFree,

@@ -89,7 +89,7 @@
             <h2 class="text-2xl font-black tracking-tight">Уроки</h2>
             <p class="text-slate-500 text-sm">{{ lessonList.length }} {{ pluralize(lessonList.length, 'урок', 'урока', 'уроков') }} · порядок меняется стрелками</p>
           </div>
-          <button type="button" class="h-11 px-5 rounded-full bg-slate-900 text-white font-medium inline-flex items-center gap-2 hover:bg-slate-700" @click="openLesson(null)"><Icon name="plus" size="w-4 h-4" /> Добавить урок</button>
+          <a :href="adminLessonRoute.query({ course: course.id }).url()" class="h-11 px-5 rounded-full bg-slate-900 text-white font-medium inline-flex items-center gap-2 hover:bg-slate-700"><Icon name="plus" size="w-4 h-4" /> Добавить урок</a>
         </div>
 
         <ol class="mt-5 divide-y divide-slate-100 rounded-2xl bg-white border border-slate-200/80">
@@ -97,16 +97,16 @@
             <span class="w-8 h-8 rounded-full bg-slate-100 grid place-items-center text-sm font-bold text-slate-600 shrink-0">{{ i + 1 }}</span>
             <div class="flex-1 min-w-0">
               <div class="font-medium flex items-center gap-2 flex-wrap">
-                {{ l.title }}
+                <a :href="adminLessonRoute.query({ course: course.id, id: l.id }).url()" class="hover:underline">{{ l.title }}</a>
                 <span v-if="l.isFree" class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">Открытый</span>
-                <span v-if="l.videoUrl" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs">видео</span>
+                <span v-if="l.videoHash || l.videoUrl" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs">{{ l.videoHash ? 'видео из хранилища' : 'видео по ссылке' }}</span>
               </div>
               <div class="text-sm text-slate-500 line-clamp-1">{{ l.description }} · {{ l.durationMinutes }} мин</div>
             </div>
             <div class="flex items-center">
               <button type="button" class="w-9 h-9 rounded-full grid place-items-center hover:bg-slate-100 text-slate-500 disabled:opacity-30" :disabled="i === 0 || busy" title="Выше" @click="move(i, -1)"><Icon name="chevron-up" size="w-4 h-4" /></button>
               <button type="button" class="w-9 h-9 rounded-full grid place-items-center hover:bg-slate-100 text-slate-500 disabled:opacity-30" :disabled="i === lessonList.length - 1 || busy" title="Ниже" @click="move(i, 1)"><Icon name="chevron-down" size="w-4 h-4" /></button>
-              <button type="button" class="w-9 h-9 rounded-full grid place-items-center hover:bg-slate-100 text-slate-500" title="Редактировать" @click="openLesson(l)"><Icon name="edit" size="w-4 h-4" /></button>
+              <a :href="adminLessonRoute.query({ course: course.id, id: l.id }).url()" class="w-9 h-9 rounded-full grid place-items-center hover:bg-slate-100 text-slate-500" title="Редактировать"><Icon name="edit" size="w-4 h-4" /></a>
               <button type="button" class="w-9 h-9 rounded-full grid place-items-center hover:bg-rose-50 text-slate-400 hover:text-rose-600" title="Удалить" :disabled="busy" @click="deleteLesson(l)"><Icon name="trash" size="w-4 h-4" /></button>
             </div>
           </li>
@@ -115,43 +115,6 @@
       </section>
       <p v-else class="mt-10 text-sm text-slate-500 rounded-xl bg-slate-100 p-4">Уроки можно будет добавить после создания курса.</p>
 
-      <!-- Lesson modal -->
-      <div v-if="lessonForm" class="fixed inset-0 z-50 bg-slate-900/50 flex items-start justify-center p-4 overflow-y-auto" @click.self="lessonForm = null">
-        <form class="w-full max-w-2xl bg-white rounded-2xl p-6 space-y-4 my-8" @submit.prevent="saveLesson">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xl font-bold">{{ lessonForm.id ? 'Урок' : 'Новый урок' }}</h3>
-            <button type="button" class="w-9 h-9 rounded-full grid place-items-center hover:bg-slate-100" @click="lessonForm = null"><Icon name="close" /></button>
-          </div>
-          <label class="block">
-            <span class="text-sm text-slate-600">Название</span>
-            <input v-model="lessonForm.title" required class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-300 outline-none focus:border-indigo-500" />
-          </label>
-          <label class="block">
-            <span class="text-sm text-slate-600">Короткое описание</span>
-            <input v-model="lessonForm.description" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-300 outline-none focus:border-indigo-500" />
-          </label>
-          <div class="grid sm:grid-cols-[1fr_140px] gap-4">
-            <label class="block">
-              <span class="text-sm text-slate-600">Ссылка на видео (YouTube, VK Video, Rutube или mp4)</span>
-              <input v-model="lessonForm.videoUrl" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-300 outline-none focus:border-indigo-500" placeholder="https://…" />
-            </label>
-            <label class="block">
-              <span class="text-sm text-slate-600">Минут</span>
-              <input v-model.number="lessonForm.durationMinutes" type="number" min="0" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-300 outline-none focus:border-indigo-500" />
-            </label>
-          </div>
-          <label class="block">
-            <span class="text-sm text-slate-600">Конспект урока — поддерживаются заголовки «## », списки «- » и **жирный**</span>
-            <textarea v-model="lessonForm.content" rows="10" class="mt-1 w-full px-3 py-2 rounded-xl border border-slate-300 outline-none focus:border-indigo-500 font-mono text-sm"></textarea>
-          </label>
-          <label class="inline-flex items-center gap-2 cursor-pointer"><input v-model="lessonForm.isFree" type="checkbox" class="w-5 h-5 accent-indigo-600" /><span class="text-sm">Открытый урок — доступен без записи на курс</span></label>
-          <p v-if="lessonError" class="text-sm text-rose-600 rounded-xl bg-rose-50 p-3">{{ lessonError }}</p>
-          <div class="flex gap-3 pt-2">
-            <button type="submit" class="h-11 px-6 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50" :disabled="busy">{{ busy ? 'Сохраняем…' : 'Сохранить урок' }}</button>
-            <button type="button" class="h-11 px-5 rounded-full border border-slate-300 font-medium hover:bg-slate-50" @click="lessonForm = null">Отмена</button>
-          </div>
-        </form>
-      </div>
     </main>
   </div>
 </template>
@@ -167,10 +130,9 @@ import { LEVELS } from '../../school/shared/config'
 import { pluralize } from '../../school/shared/format'
 import { adminRoute } from '../index'
 import { adminCourseRoute } from '../course'
+import { adminLessonRoute } from '../lesson'
 import { courseCreateRoute } from '../api/courses/create'
 import { courseUpdateRoute } from '../api/courses/update'
-import { lessonCreateRoute } from '../api/lessons/create'
-import { lessonUpdateRoute } from '../api/lessons/update'
 import { lessonDeleteRoute } from '../api/lessons/delete'
 import { lessonsReorderRoute } from '../api/lessons/reorder'
 
@@ -204,8 +166,6 @@ const error = ref('')
 const busy = ref(false)
 
 const lessonList = ref<any[]>([...props.lessons])
-const lessonForm = ref<any | null>(null)
-const lessonError = ref('')
 
 async function onFile(event: Event) {
   const input = event.target as HTMLInputElement
@@ -286,35 +246,6 @@ async function save() {
   } catch (e: any) {
     error.value = e?.message || 'Не удалось сохранить курс'
     saving.value = false
-  }
-}
-
-function openLesson(l: any | null) {
-  lessonError.value = ''
-  lessonForm.value = l
-    ? { id: l.id, title: l.title, description: l.description, content: l.content, videoUrl: l.videoUrl ?? '', durationMinutes: l.durationMinutes, isFree: l.isFree }
-    : { id: null, title: '', description: '', content: '', videoUrl: '', durationMinutes: 15, isFree: lessonList.value.length === 0 }
-}
-
-async function saveLesson() {
-  if (!props.course || !lessonForm.value) return
-  busy.value = true
-  lessonError.value = ''
-  const f = lessonForm.value
-  const body = { title: f.title, description: f.description, content: f.content, videoUrl: f.videoUrl || undefined, durationMinutes: Math.max(0, Math.floor(Number(f.durationMinutes) || 0)), isFree: !!f.isFree }
-  try {
-    if (f.id) {
-      const updated = await lessonUpdateRoute.query({ id: f.id }).run(ctx, body)
-      lessonList.value = lessonList.value.map(x => (x.id === updated.id ? updated : x))
-    } else {
-      const created = await lessonCreateRoute.query({ course: props.course.id }).run(ctx, body)
-      lessonList.value = [...lessonList.value, created]
-    }
-    lessonForm.value = null
-  } catch (e: any) {
-    lessonError.value = e?.message || 'Не удалось сохранить урок'
-  } finally {
-    busy.value = false
   }
 }
 

@@ -12,8 +12,9 @@
               <a :href="coursesRoute.url()" class="hover:text-white">Курсы</a><span>/</span>
               <span class="text-slate-200 line-clamp-1">{{ course.title }}</span>
             </nav>
-            <div class="mt-5 flex flex-wrap gap-2">
+            <div class="mt-5 flex flex-wrap items-center gap-2">
               <span class="px-3 py-1 rounded-full bg-white/10 text-xs font-semibold">{{ course.levelLabel }}</span>
+              <a v-if="adminUrl" :href="adminUrl" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-slate-900 text-xs font-semibold hover:bg-amber-300"><Icon name="edit" size="w-3.5 h-3.5" /> Редактировать курс</a>
               <span v-if="course.isFree" class="px-3 py-1 rounded-full bg-emerald-500 text-xs font-bold">Бесплатно</span>
             </div>
             <h1 class="mt-4 text-3xl md:text-5xl font-black tracking-tight leading-tight">{{ course.title }}</h1>
@@ -142,7 +143,7 @@ import { coursesRoute } from '../courses'
 import { enrollRoute } from '../enroll'
 import { learnRoute } from '../learn'
 
-const props = defineProps<{ course: any; lessons: any[]; enrollmentStatus: string | null; completedLessons: string[] }>()
+const props = defineProps<{ course: any; lessons: any[]; enrollmentStatus: string | null; completedLessons: string[]; adminUrl: string | null }>()
 
 const enrolled = computed(() => props.enrollmentStatus === 'active' || props.enrollmentStatus === 'completed')
 const freeLesson = computed(() => props.lessons.find(l => l.isFree) ?? null)

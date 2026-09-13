@@ -23,6 +23,7 @@ export const lessonBody = {
   title: s.string().min(1),
   description: s.string(),
   content: s.string(),
+  videoHash: s.string().optional(),
   videoUrl: s.string().optional(),
   durationMinutes: s.number().int().min(0),
   isFree: s.boolean(),

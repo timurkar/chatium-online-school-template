@@ -4,6 +4,7 @@ import { getPublicCourse, listLessons } from './server/course-data'
 import { findEnrollment } from './server/enrollment-data'
 import CoursePage from './pages/CoursePage.vue'
 import NotFoundPage from './pages/NotFoundPage.vue'
+import { adminCourseRoute } from '../school-admin/course'
 
 export const courseRoute = app.get('/')
   .query(s => ({ id: s.string() }))
@@ -19,6 +20,7 @@ export const courseRoute = app.get('/')
     const lessons = await listLessons(ctx, course.id)
     const user = ctx.user && ctx.user.type === 'Real' ? ctx.user : null
     const enrollment = user ? await findEnrollment(ctx, String(user.id), course.id) : null
+    const adminUrl = ctx.user?.is('Staff') ? adminCourseRoute.query({ id: course.id }).url() : null
     return (
       <Page title={course.title} description={course.description}>
         <CoursePage
@@ -26,6 +28,7 @@ export const courseRoute = app.get('/')
           lessons={lessons}
           enrollmentStatus={enrollment ? enrollment.status : null}
           completedLessons={enrollment ? enrollment.completedLessons : []}
+          adminUrl={adminUrl}
         />
       </Page>
     )
