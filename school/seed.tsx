@@ -15,7 +15,7 @@ export const seedRoute = app.get('/')
   .query(s => ({ reset: s.string().optional() }))
   .handle(async (ctx, req) => {
   if (req.query.reset === '1') {
-    // TEMP
+    requireAccountRole(ctx, 'Staff')
     for (const row of await Lessons.findAll(ctx, { limit: 1000 })) await Lessons.delete(ctx, row.id)
     for (const row of await Courses.findAll(ctx, { limit: 1000 })) await Courses.delete(ctx, row.id)
   }
